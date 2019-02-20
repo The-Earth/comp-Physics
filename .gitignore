@@ -1,0 +1,9 @@
+# PyCharm
+.idea/
+
+# CMake
+cmake-build-debug/
+CMakeLists.txt
+
+# Executable
+*.exe
