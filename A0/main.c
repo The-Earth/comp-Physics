@@ -71,7 +71,7 @@ int main(){
     int len = 16;
     float list[len];
     for(int i = 0; i<len; i++) {
-        list[i] = i / (float)8 + (float)8192;
+        list[i] = i / (float)8 + (float)0;
         printf("%.3f -> ", list[i]);
         get_raw(list[i]);
         printf("\n");
