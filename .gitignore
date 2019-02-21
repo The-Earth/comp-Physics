@@ -7,3 +7,9 @@ CMakeLists.txt
 
 # Executable
 *.exe
+
+# Course file
+Ans/
+
+# temp file
+temp/
