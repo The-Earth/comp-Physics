@@ -1,6 +1,5 @@
 // get raw bin code of float in memory
 #include <stdio.h>
-#include <math.h>
 #include <stdlib.h>
 
 int d2b_pos(int num)
@@ -55,27 +54,19 @@ int d2b_neg(int num){
     return 0;
 }
 
-int get_raw(float a){
-    // get bin in int form
-    int dec = (*(int *)&a);
-    // convert int to bin and print
+int main(){
+    float fl;
+
+    puts("Input: ");
+    scanf("%f", &fl);
+    printf("%f -> ", fl);
+    int dec = (*(int *)&fl);
+
     if(dec >= 0)
         d2b_pos(dec);
     else if(dec < 0)
         d2b_neg(dec);
-    return 0;
-}
-
-int main(){
-    // manually set view range
-    int len = 16;
-    float list[len];
-    for(int i = 0; i<len; i++) {
-        list[i] = i / (float)8 + (float)0;
-        printf("%.3f -> ", list[i]);
-        get_raw(list[i]);
-        printf("\n");
-    }
-
+    puts("\n");
+    system("pause");
     return 0;
 }
