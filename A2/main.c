@@ -3,13 +3,13 @@
 #include "newton.c"
 
 int main() {
-    int js, k;
-    double x, eps;
-    eps = 0.000001;
-    js = 60;    // max steps
-    x = 0;    // initial guess
-    k = dnewt(&x, eps, js); // k is used steps
-    if (k >= 0)
-        printf("steps=%d  x=%13.7e\n", k, x);
-    printf("\n");
+    int max_step, steps;
+    double init_gue, eps;
+    eps = 1e-13;
+    max_step = (int) 1e6;    // max steps
+    init_gue = -5;    // initial guess
+    steps = dnewt(&init_gue, eps, max_step); // steps is used steps
+    if (steps == max_step)
+        puts("Max steps reached. Check the result!");
+    printf("steps=%d  x=%13.7e\n", steps, init_gue);
 }

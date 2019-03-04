@@ -2,25 +2,21 @@
 #include <stdio.h>
 #include <math.h>
 
-void dnewtf(x, y)
-        double x, y[2];
+void dnewtf(double x, double y[2])  // define fomula f(x) = 0
 {
-    y[0] = x * x - 1; // f(x)
-    y[1] = 2 * x;   // f'(x)
+    y[0] = pow(x, 3) + 2 * pow(x, 2) - 3 * x; // f(x)
+    y[1] = 3 * pow(x, 2) + 2 * x - 3;   // f'(x)
 }
 
-int dnewt(x, eps, js)
-        int js;
-        double *x, eps;
-{
-    int k, l;
-    double y[2], d, p, x0, x1;
-    l = js;
+int dnewt(double *x, double eps, int max) {
+    int remain;
+    double y[2], dx, dy, x0, x1;
+    remain = max;
     x0 = *x;
     x1 = *x;
     dnewtf(x0, y);
-    d = eps + 1.0;
-    while ((d >= eps) && (l != 0)) {
+    dx = eps + 1.0;
+    while ((dx >= eps) && (remain != 0)) {
         if (fabs(y[1]) + 1.0 == 1.0) {  // derivative = 0
             x0 += eps;
             dnewtf(x0, y);
@@ -28,14 +24,14 @@ int dnewt(x, eps, js)
         }
         x1 = x0 - y[0] / y[1];  // update x
         dnewtf(x1, y);
-        d = fabs(x1 - x0);
-        p = fabs(y[0]);
-        if (p > d)
-            d = p;
+        dx = fabs(x1 - x0);
+        dy = fabs(y[0]);
+        if (dy > dx)
+            dx = dy;
         x0 = x1;
-        l = l - 1;  // remaining steps
+        remain = remain - 1;  // remaining steps
     }
-    *x = x1;
-    k = js - l; // used steps
-    return (k);
+    *x = x1;    // return x through pointer
+    int step = max - remain;
+    return step;
 }
