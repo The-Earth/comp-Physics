@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <math.h>
 
-void dnewtf(double x, double y[2])  // define fomula f(x) = 0
+void dnewtf(double x, double y[2])  // define formula f(x) = 0 (Van de Waals Oxygen)
 {
-    y[0] = pow(x, 3) + 2 * pow(x, 2) - 3 * x; // f(x)
-    y[1] = 3 * pow(x, 2) + 2 * x - 3;   // f'(x)
+    double a = 0.138, b = 3.18e-5, R = 8.314472;
+    y[0] = (1e5 + a / pow(x, 2)) * (x - b) / R - 273; // f(x)
+    y[1] = (2 * a * b - a * x + 1e5 * pow(x, 3)) / (R * pow(x, 3));   // f'(x)
 }
 
 int dnewt(double *x, double eps, int max) {
