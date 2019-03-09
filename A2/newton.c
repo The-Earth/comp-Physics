@@ -5,7 +5,7 @@
 void dnewtf(double x, double y[2])  // define formula f(x) = 0 (Van de Waals Oxygen)
 {
     double a = 0.138, b = 3.18e-5, R = 8.314472;
-    y[0] = (1e5 + a / pow(x, 2)) * (x - b) / R - 273; // f(x)
+    y[0] = (1.013e5 + a / pow(x, 2)) * (x - b) / R - 273.15; // f(x)
     y[1] = (2 * a * b - a * x + 1e5 * pow(x, 3)) / (R * pow(x, 3));   // f'(x)
 }
 
@@ -18,7 +18,7 @@ int dnewt(double *x, double eps, int max) {
     dnewtf(x0, y);
     dx = eps + 1.0;
     while ((dx >= eps) && (remain != 0)) {
-        if (fabs(y[1]) + 1.0 == 1.0) {  // derivative = 0
+        if (fabs(y[1]) < eps) {  // derivative = 0
             x0 += eps;
             dnewtf(x0, y);
             continue;

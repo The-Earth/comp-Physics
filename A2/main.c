@@ -12,5 +12,9 @@ int main() {
     if (steps == max_step)
         puts("Max steps reached. Check the result!");
     printf("steps=%d,  x=%13.7e\n", steps, init_gue);
+
+    double y;
+    dnewtf(init_gue, &y);
+    printf("y-0=%e", y);
     return 0;
 }
