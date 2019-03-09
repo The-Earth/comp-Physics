@@ -1,5 +1,6 @@
 // Newton method
 #include <stdio.h>
+#include <stdlib.h>
 #include "newton.c"
 
 int main() {
@@ -16,5 +17,6 @@ int main() {
     double y;
     dnewtf(init_gue, &y);
     printf("y-0=%e", y);
+    system("pause"); 
     return 0;
 }
