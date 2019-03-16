@@ -11,14 +11,14 @@ par5 = 2.3868285729087e-1
 # Absorption rate
 a = 0.9
 
-coefficient_mat = np.mat([[1 / (a - 1), par2, par2, par2, par2, par1],
-                          [par4, 1 / (a - 1), par5, par3, par5, par4],
-                          [par4, par5, 1 / (a - 1), par5, par3, par4],
-                          [par4, par3, par5, 1 / (a - 1), par5, par4],
-                          [par4, par5, par3, par5, 1 / (a - 1), par4],
-                          [par1, par2, par2, par2, par2, 1 / (a - 1)]]).transpose()
+coefficient_mat = np.mat([[-1, par2*(1-a), par2*(1-a), par2*(1-a), par2*(1-a), par1*(1-a)],
+                          [par4*(1-a), -1, par5*(1-a), par3*(1-a), par5*(1-a), par4*(1-a)],
+                          [par4*(1-a), par5*(1-a), -1, par5*(1-a), par3*(1-a), par4*(1-a)],
+                          [par4*(1-a), par3*(1-a), par5*(1-a), -1, par5*(1-a), par4*(1-a)],
+                          [par4*(1-a), par5*(1-a), par3*(1-a), par5*(1-a), -1, par4*(1-a)],
+                          [par1*(1-a), par2*(1-a), par2*(1-a), par2*(1-a), par2*(1-a), -1]]).transpose()
 
-constant_vec = np.array([1 / (a - 1), 0, 0, 0, 0, 0])
+constant_vec = np.array([0, -par4, -par4, -par4, -par4, -par1])
 result = linalg.solve(coefficient_mat, constant_vec)
 
-print(sum(result))
+print(sum([result[0]*(1-a)+1, result[1]*(1-a), result[2]*(1-a), result[3]*(1-a), result[4]*(1-a), result[5]*(1-a)]))
