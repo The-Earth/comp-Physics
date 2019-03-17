@@ -19,6 +19,6 @@ coefficient_mat = np.mat([[1 / (a - 1), par5, par5, par5, par5, par1],
                           [par1, par5, par5, par5, par5, 1 / (a - 1)]], dtype="float64")
 
 constant_vec = np.array([1 / (a - 1), 0, 0, 0, 0, 0])
-result = linalg.solve(coefficient_mat, constant_vec)    # Outbound flux
-s = result[1:] / (1-a)
+result = linalg.solve(coefficient_mat, constant_vec)  # Outbound flux
+s = result[1:] / (1 - a)
 print(f'Outbound: {result}\nInbound: {s}')
