@@ -8,9 +8,10 @@ CMakeLists.txt
 # Executable
 *.exe
 
+# Python
+*__pycache__/
+
 # Course file
 Ans/
-
-# temp file
 temp/
 misc/
