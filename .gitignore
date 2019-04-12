@@ -15,3 +15,7 @@ CMakeLists.txt
 Ans/
 temp/
 misc/
+
+# Misc
+*.lis
+*.DAT
