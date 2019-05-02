@@ -5,7 +5,7 @@
 
 #define NE  2000
 #define C0  3.E8
-#define CFL 0.05
+#define CFL 0.01
 #define DEL 0.01
 #define DT  (CFL * DEL / C0)
 #define CDT (C0*DT)
@@ -150,7 +150,7 @@ int main(void) {
     Init();
     BuildMassMatrix();
 
-    int nt = 6. / CDT;
+    int nt = 4. / CDT;
 
     double t = 0.0;
 
@@ -173,7 +173,7 @@ int main(void) {
 
             EvsT
                     << std::setw(25) << std::setprecision(15) << t
-                    << std::setw(25) << std::setprecision(15) << 0.5 * (elem[100].e[0] + elem[100].e[1])
+                    << std::setw(25) << std::setprecision(15) << 0.5 * (elem[NE/2].e[0] + elem[NE/2].e[1])
                     << std::endl;
 
 
