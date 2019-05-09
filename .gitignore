@@ -10,6 +10,7 @@ CMakeLists.txt
 
 # Python
 *__pycache__/
+*config.py
 
 # Course file
 Ans/
@@ -19,3 +20,4 @@ misc/
 # Misc
 *.lis
 *.DAT
+*.png

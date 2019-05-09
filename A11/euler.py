@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 dt = 1e-1   # time unit
 
 
-class harmonicMass:
+class HarmonicMass:
     k = 10   # Spring parameter
 
     def __init__(self, x_0, v_0):
@@ -11,7 +11,7 @@ class harmonicMass:
         self.pre_v = v_0
 
     def acceleration(self):
-        return -harmonicMass.k * self.x
+        return -HarmonicMass.k * self.x
 
     def update_v(self):
         self.pre_v = self.v
@@ -28,7 +28,7 @@ v_list = []
 cur_t = 0
 max_t = 10
 
-mp = harmonicMass(x_0=1, v_0=0)
+mp = HarmonicMass(x_0=1, v_0=0)
 
 while cur_t <= max_t:
     # x_list.append(mp.x)
@@ -38,5 +38,5 @@ while cur_t <= max_t:
     mp.update_x()
     cur_t += dt
 
-plt.savefig('x-t.png')
+plt.savefig('x-t_euler.png')
 plt.show()
