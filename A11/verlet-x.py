@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
-dt = 1e-2   # time unit
+from scipy import cos, sqrt
+dt = 1e-2  # time unit
 
 
 class HarmonicMass:
@@ -16,22 +17,29 @@ class HarmonicMass:
     def update_x(self):
         cur_x = self.x
         self.x = 2 * cur_x - self.pre_x + self.acceleration() * dt**2
+        self.v = (self.pre_x - self.x) / (2 * dt)
         self.pre_x = cur_x
         return self.x
 
 
 cur_t = 0
-max_t = 10
+max_t = 2
 x_list = []
+v_list = []
+t_list = []
 
 mp = HarmonicMass(x_0=1, v_0=0)
 
 while cur_t <= max_t:
-    plt.scatter(cur_t, mp.x, c='blue', marker='.')
+    v_list.append(mp.v)
     x_list.append(mp.x)
+    t_list.append(cur_t)
     mp.update_x()
     cur_t += dt
 
-plt.savefig('verlet-x_x-t.png')
-print(x_list)
+theory_x = [cos(sqrt(10) * t) for t in t_list]
+
+plt.scatter(t_list, x_list, c='blue', marker='.', s=3)
+plt.plot(t_list, theory_x, c='red', lw=1)
+plt.savefig('phase_verlet-x.png')
 plt.show()

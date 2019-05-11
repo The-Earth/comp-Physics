@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from scipy import cos, sqrt
 dt = 1e-2   # time unit
 
 
@@ -27,16 +28,21 @@ cur_t = 0
 max_t = 10
 x_list = []
 t_list = []
+v_list = []
 
 mp = HarmonicMass(x_0=1, v_0=0, k=10)
 
 while cur_t <= max_t:
     x_list.append(mp.x)
+    v_list.append(mp.v)
     t_list.append(cur_t)
     mp.update_x()
     mp.update_v()
     cur_t += dt
 
-plt.plot(t_list, x_list)
-plt.savefig('verlet-v_v-t.png')
+theory_x = [cos(sqrt(10) * t) for t in t_list]
+
+plt.scatter(t_list, x_list, c='blue', marker='.', s=3)
+plt.plot(t_list, theory_x, c='red', lw=1)
+plt.savefig('verlet-v.png')
 plt.show()
