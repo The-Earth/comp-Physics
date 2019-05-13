@@ -28,7 +28,8 @@ ELEM elem[NE + 2];
 
 void BuildMassMatrix() {
     for (int ielem = 1; ielem <= NE; ++ielem) {
-        epr[ielem] = 1;
+        if (ielem > NE / 2) epr[ielem] = 4;
+        else epr[ielem] = 1;
         mur[ielem] = 1;
 
 
@@ -137,11 +138,28 @@ void Init() {
         double te = 0.0000000;
 
         for (int ielem = 1; ielem <= NE; ++ielem) {
+            if (ielem <= NE / 2) {
+                elem[ielem].h[0] = sin((double) ielem / NE * 2 * PI);
+                elem[ielem].h[1] = sin(((double) ielem + 1) / NE * 2 * PI);
+
+                elem[ielem].e[0] = sin((double) ielem / NE * 2 * PI);
+                elem[ielem].e[1] = sin(((double) ielem + 1) / NE * 2 * PI);
+            }
+            else {
+                elem[ielem].h[0] = 0;
+                elem[ielem].h[1] = 0;
+
+                elem[ielem].e[0] = 0;
+                elem[ielem].e[1] = 0;
+            }
+
+            /*
             elem[ielem].h[0] = sin((double) ielem / NE * 2 * PI);
             elem[ielem].h[1] = sin(((double) ielem + 1) / NE * 2 * PI);
 
             elem[ielem].e[0] = sin((double) ielem / NE * 2 * PI);
             elem[ielem].e[1] = sin(((double) ielem + 1) / NE * 2 * PI);
+            */
         }
     }
 }
@@ -150,7 +168,7 @@ int main(void) {
     Init();
     BuildMassMatrix();
 
-    int nt = 4. / CDT;
+    int nt = 5 / CDT;
 
     double t = 0.0;
 
@@ -183,14 +201,22 @@ int main(void) {
     EvsT.clear();
 
     std::ofstream EvsZ("ex_vs_z.dat");
+    std::ofstream HvsZ("hy_vs_z.dat");
 
     for (int ielem = 1; ielem <= NE; ++ielem) {
         EvsZ
                 << std::setw(25) << std::setprecision(15) << 0.5 * (z[ielem] + z[ielem + 1])
                 << std::setw(25) << std::setprecision(15) << 0.5 * (elem[ielem].e[0] + elem[ielem].e[1])
                 << std::endl;
+
+        HvsZ
+                << std::setw(25) << std::setprecision(15) << 0.5 * (z[ielem] + z[ielem + 1])
+                << std::setw(25) << std::setprecision(15) << 0.5 * (elem[ielem].h[0] + elem[ielem].h[1])
+                << std::endl;
     }
 
     EvsZ.close();
     EvsZ.clear();
+    HvsZ.close();
+    HvsZ.clear();
 }
