@@ -16,7 +16,7 @@ class HarmonicMass:
 
     def update_x(self):
         self.prev_x = self.x
-        self.x = self.x + self.v * dt + 0.5 * self.acceleration(self.x) * dt**2
+        self.x = self.x + self.v * dt + 0.5 * self.acceleration(self.prev_x) * dt**2
         return self.x
 
     def update_v(self):
