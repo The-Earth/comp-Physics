@@ -3,10 +3,10 @@ from numpy.random import random
 from scipy import sin, cos, pi
 
 plt.ion()
-dt = 1e-2
+dt = 1e-1
 cur_t = 0
-t_max = 10
-num_of_atom = 25
+t_max = 600
+num_of_atom = 100
 T_eq = 1
 max_x = 10
 max_y = 10
@@ -92,7 +92,8 @@ def move():
     plt.pause(0.2e-2)
 
 
-atom_list = []
+atom_list, T_list = [], []
+t_list = []
 # Initialization
 for i in range(num_of_atom):
     x0, y0 = random() * max_x, random() * max_y
@@ -103,8 +104,24 @@ for i in range(num_of_atom):
 
 while cur_t < t_max:
     move()
-    if cur_t - cur_t // dt * dt > 100:
-        T_cur = get_system_temperature(atom_list, 2, num_of_atom)
-        if abs(T_cur - T_eq) > 1e-1:
-            temperature_adjust(T_eq)
+    T_cur = get_system_temperature(atom_list, 2, num_of_atom)
+    T_list.append(T_cur)
+    t_list.append(cur_t)
     cur_t += dt
+
+plt.ioff()
+plt.cla()
+plt.autoscale()
+plt.plot(t_list, T_list, c='blue')
+plt.show()
+plt.savefig('1.png')
+
+v_list = []
+
+for atom in atom_list:
+    v_list.append((atom.vx ** 2 + atom.vy ** 2) ** 0.5)
+
+plt.cla()
+plt.hist(v_list, bins=15)
+plt.show()
+plt.savefig('2.png')
