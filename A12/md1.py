@@ -3,11 +3,11 @@ from numpy.random import random
 from scipy import sin, cos, pi
 
 plt.ion()
-dt = 1e-2
+dt = 5e-2
 cur_t = 0
-t_max = 10
-num_of_atom = 25
-T_eq = 1
+t_max = 2000
+num_of_atom = 2
+T_eq = 10
 max_x = 10
 max_y = 10
 
@@ -29,8 +29,8 @@ class Mass:
 
     def update_r(self, max_x, max_y):
         self.prev_x, self.prev_y = self.x, self.y
-        self.x = self.x + self.vx * dt + 0.5 * self.ax * dt**2
-        self.y = self.y + self.vy * dt + 0.5 * self.ay * dt**2
+        self.x = self.x + self.vx * dt + 0.5 * self.prev_ax * dt**2
+        self.y = self.y + self.vy * dt + 0.5 * self.prev_ay * dt**2
 
         # Periodical boundary
         if self.x > max_x or self.x < 0:
@@ -55,7 +55,7 @@ class Mass:
             if atom == self:
                 continue
 
-            ax += self.k * (atom.x - self.x)
+            ax += -self.k * (self.x - atom.x + 1 if self.x <= atom.x else -1)
             ay += self.k * (atom.y - self.y)
 
         self.ax = ax
@@ -71,10 +71,10 @@ def get_system_temperature(all_atoms, dimension, amount):
     return 2 * sum / dimension / amount
 
 
-def temperature_adjust(T_tar):
+def temperature_adjust(cur_T):
     for atom in atom_list:
-        atom.vx = atom.vx * ((T_eq / T_tar) ** 0.5)
-        atom.vy = atom.vy * ((T_eq / T_tar) ** 0.5)
+        atom.vx = atom.vx * ((T_eq / cur_T) ** 0.5)
+        atom.vy = atom.vy * ((T_eq / cur_T) ** 0.5)
 
 
 def move():
@@ -88,23 +88,35 @@ def move():
         atom.update_v()
         plt.scatter(atom.x, atom.y, c='blue')
 
-    plt.draw()
-    plt.pause(0.2e-2)
+    plt.pause(1e-2)
 
 
-atom_list = []
+atom_list, T_list = [], []
+t_list, v_list = [], []
 # Initialization
 for i in range(num_of_atom):
-    x0, y0 = random() * max_x, random() * max_y
-    v0, theta0 = random() + 5, random() * 2 * pi
-    atom_list.append(Mass(x0, y0, v0 * cos(theta0), v0 * sin(theta0), k=0.1))
+    x0, y0 = i + 4.5, 5
+    v0, theta0 = 0.01, 0 if i == 1 else pi
+    atom_list.append(Mass(x0, y0, v0 * cos(theta0), v0 * sin(theta0), k=15))
     # plt.plot(x0, y0, c='blue')
 
-
+count = 0
 while cur_t < t_max:
     move()
-    if cur_t - cur_t // dt * dt > 100:
-        T_cur = get_system_temperature(atom_list, 2, num_of_atom)
-        if abs(T_cur - T_eq) > 1e-1:
-            temperature_adjust(T_eq)
+    cur_T = get_system_temperature(atom_list, 2, num_of_atom)
+    T_list.append(cur_T)
+    t_list.append(cur_t)
+    v_list.append(atom_list[0].vx)
+    if count % 100 == 0 and abs(cur_T - T_eq) > 1:
+        temperature_adjust(cur_T)
     cur_t += dt
+    count += 1
+
+plt.ioff()
+plt.cla()
+plt.autoscale()
+plt.plot(t_list, T_list, c='blue')
+plt.show()
+plt.cla()
+plt.plot(t_list, v_list, c='blue')
+plt.show()
