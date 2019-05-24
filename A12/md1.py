@@ -3,10 +3,10 @@ from numpy.random import random
 from scipy import sin, cos, pi
 
 plt.ion()
-dt = 1e-1
+dt = 1e-2
 cur_t = 0
-t_max = 600
-num_of_atom = 100
+t_max = 100000
+num_of_atom = 10
 T_eq = 1
 max_x = 10
 max_y = 10
@@ -88,7 +88,6 @@ def move():
         atom.update_v()
         plt.scatter(atom.x, atom.y, c='blue')
 
-    plt.draw()
     plt.pause(0.2e-2)
 
 
@@ -109,12 +108,12 @@ while cur_t < t_max:
     t_list.append(cur_t)
     cur_t += dt
 
-plt.ioff()
+# plt.ioff()
 plt.cla()
 plt.autoscale()
 plt.plot(t_list, T_list, c='blue')
-plt.show()
 plt.savefig('1.png')
+plt.show()
 
 v_list = []
 
@@ -123,5 +122,5 @@ for atom in atom_list:
 
 plt.cla()
 plt.hist(v_list, bins=15)
-plt.show()
 plt.savefig('2.png')
+plt.show()
