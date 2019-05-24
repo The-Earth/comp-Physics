@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 from numpy.random import random
-from scipy import sin, cos, pi
+from scipy import sin, cos, pi, sqrt
 
 plt.ion()
 dt = 1e-2
@@ -29,8 +29,8 @@ class Mass:
 
     def update_r(self, max_x, max_y):
         self.prev_x, self.prev_y = self.x, self.y
-        self.x = self.x + self.vx * dt + 0.5 * self.ax * dt**2
-        self.y = self.y + self.vy * dt + 0.5 * self.ay * dt**2
+        self.x = self.x + self.vx * dt + 0.5 * self.ax * dt ** 2
+        self.y = self.y + self.vy * dt + 0.5 * self.ay * dt ** 2
 
         # Periodical boundary
         if self.x > max_x or self.x < 0:
@@ -55,8 +55,12 @@ class Mass:
             if atom == self:
                 continue
 
-            ax += self.k * (atom.x - self.x)
-            ay += self.k * (atom.y - self.y)
+            dr = sqrt((self.x - atom.x) ** 2 + (self.y - atom.y) ** 2)
+            dx = sqrt(self.x - atom.x)
+            dy = sqrt(self.y - atom.y)
+
+            ax += (2 * dr ** (-13) - dr ** (-7)) * dx / dr
+            ay += (2 * dr ** (-13) - dr ** (-7)) * dy / dr
 
         self.ax = ax
         self.ay = ay
@@ -96,10 +100,9 @@ t_list = []
 # Initialization
 for i in range(num_of_atom):
     x0, y0 = random() * max_x, random() * max_y
-    v0, theta0 = random() + 5, random() * 2 * pi
+    v0, theta0 = random() + 0.5, random() * 2 * pi
     atom_list.append(Mass(x0, y0, v0 * cos(theta0), v0 * sin(theta0), k=0.1))
     # plt.plot(x0, y0, c='blue')
-
 
 while cur_t < t_max:
     move()
