@@ -2,9 +2,10 @@ from numpy import random, sqrt
 from matplotlib import pyplot as plt
 
 dx = 1
-init_range = 30
-cord_range = 100
-number_of_atoms = 1000
+max_range = 100
+min_range = 50
+cord_range = 120
+number_of_atoms = 5000
 
 
 def move(cord: tuple) -> tuple:
@@ -38,7 +39,8 @@ def is_adjacent(cord: tuple, seed: set) -> bool:
 def main() -> set:
     seed = {(0, 0)}
     for i in range(number_of_atoms):
-        p = (random.randint(-init_range, init_range), random.randint(-init_range, init_range))
+        range_ad = int(i / number_of_atoms * (max_range - min_range) + min_range)  # adaptive range
+        p = (random.randint(-range_ad, range_ad), random.randint(-range_ad, range_ad))
         while sqrt(p[0] ** 2 + p[1] ** 2) <= cord_range:
             if is_adjacent(p, seed):
                 seed.add(p)
@@ -50,11 +52,14 @@ def main() -> set:
 
 
 def fig_out(seed: set):
-    for point in seed:
-        plt.scatter(point[0], point[1], c='blue')
+    size = 10
+    while size > 0:
+        for point in seed:
+            plt.scatter(point[0], point[1], c='blue', s=size)
 
-    plt.savefig('dla.png')
-    plt.show()
+        plt.savefig('dla.png')
+        plt.show()
+        size = float(input('size: '))
 
 
 seed_res = main()
