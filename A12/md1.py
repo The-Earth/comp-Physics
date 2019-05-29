@@ -54,13 +54,14 @@ class Mass:
             assert isinstance(atom, Mass)
             if atom == self:
                 continue
-
-            dr = sqrt((self.x - atom.x) ** 2 + (self.y - atom.y) ** 2)
             dx = self.x - atom.x
             dy = self.y - atom.y
-
-            ax += (2 * dr ** (-13) - dr ** (-7)) * dx / dr
-            ay += (2 * dr ** (-13) - dr ** (-7)) * dy / dr
+            dr = sqrt(dx ** 2 + dy ** 2)
+            if dr > 1.02:    # Cut-off
+                pass
+            else:
+                ax += (2 * dr ** (-13) - dr ** (-7)) * dx / dr
+                ay += (2 * dr ** (-13) - dr ** (-7)) * dy / dr
 
         self.ax = ax
         self.ay = ay
