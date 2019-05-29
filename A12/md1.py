@@ -3,11 +3,11 @@ from numpy.random import random
 from scipy import sin, cos, pi, sqrt
 
 plt.ion()
-dt = 1e-2
+dt = .5e-1
 cur_t = 0
-t_max = 100000
-num_of_atom = 10
-T_eq = 1
+t_max = 10
+num_of_atom = 64
+T_eq = 0.5
 max_x = 10
 max_y = 10
 
@@ -56,8 +56,8 @@ class Mass:
                 continue
 
             dr = sqrt((self.x - atom.x) ** 2 + (self.y - atom.y) ** 2)
-            dx = sqrt(self.x - atom.x)
-            dy = sqrt(self.y - atom.y)
+            dx = self.x - atom.x
+            dy = self.y - atom.y
 
             ax += (2 * dr ** (-13) - dr ** (-7)) * dx / dr
             ay += (2 * dr ** (-13) - dr ** (-7)) * dy / dr
@@ -75,10 +75,10 @@ def get_system_temperature(all_atoms, dimension, amount):
     return 2 * sum / dimension / amount
 
 
-def temperature_adjust(T_tar):
+def temperature_adjust(T_cur):
     for atom in atom_list:
-        atom.vx = atom.vx * ((T_eq / T_tar) ** 0.5)
-        atom.vy = atom.vy * ((T_eq / T_tar) ** 0.5)
+        atom.vx = atom.vx * ((T_eq / T_cur) ** 0.5)
+        atom.vy = atom.vy * ((T_eq / T_cur) ** 0.5)
 
 
 def move():
@@ -88,8 +88,10 @@ def move():
     for atom in atom_list:
         atom.update_a(atom_list, prev=True)
         atom.update_a(atom_list, prev=False)
-        atom.update_r(max_x, max_y)
+    for atom in atom_list:
         atom.update_v()
+    for atom in atom_list:
+        atom.update_r(max_x, max_y)
         plt.scatter(atom.x, atom.y, c='blue')
 
     plt.pause(0.2e-2)
@@ -111,7 +113,7 @@ while cur_t < t_max:
     t_list.append(cur_t)
     cur_t += dt
 
-# plt.ioff()
+plt.ioff()
 plt.cla()
 plt.autoscale()
 plt.plot(t_list, T_list, c='blue')
