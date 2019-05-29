@@ -110,8 +110,8 @@ for i in range(num_of_atom):
 while cur_t < t_max:
     move()
     T_cur = get_system_temperature(atom_list, 2, num_of_atom)
-    if abs(T_cur - T_eq) > 0.1:
-        temperature_adjust(T_cur)
+    # if abs(T_cur - T_eq) > 0.18:
+    #     temperature_adjust(T_cur)
     T_list.append(T_cur)
     t_list.append(cur_t)
     cur_t += dt
