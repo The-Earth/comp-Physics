@@ -1,13 +1,12 @@
 from matplotlib import pyplot as plt
-from numpy.random import random
-from scipy import sin, cos, pi, sqrt
+from scipy import sin, cos, sqrt
 
 plt.ion()
-dt = .5e-1
+dt = 5e-2
 cur_t = 0
-t_max = 10
+t_max = 80
 num_of_atom = 64
-T_eq = 0.5
+T_eq = 0.2
 max_x = 10
 max_y = 10
 
@@ -57,7 +56,7 @@ class Mass:
             dx = self.x - atom.x
             dy = self.y - atom.y
             dr = sqrt(dx ** 2 + dy ** 2)
-            if dr > 1.02:    # Cut-off
+            if dr > 1.2:  # Cut-off
                 pass
             else:
                 ax += (2 * dr ** (-13) - dr ** (-7)) * dx / dr
@@ -93,7 +92,7 @@ def move():
         atom.update_v()
     for atom in atom_list:
         atom.update_r(max_x, max_y)
-        plt.scatter(atom.x, atom.y, c='blue')
+        plt.scatter(atom.x, atom.y, c='blue', s=6)
 
     plt.pause(0.2e-2)
 
@@ -102,7 +101,7 @@ atom_list, T_list = [], []
 t_list = []
 # Initialization
 for i in range(num_of_atom):
-    x0, y0 = i % 8 + 1.5, i // 8 + 1.5
+    x0, y0 = 1.09 * (i % 8) + 1, 1.09 * (i // 8) + 1
     v0, theta0 = 0, 0
     atom_list.append(Mass(x0, y0, v0 * cos(theta0), v0 * sin(theta0), k=0.1))
     # plt.plot(x0, y0, c='blue')
