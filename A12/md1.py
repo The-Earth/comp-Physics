@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 from scipy import sin, cos, sqrt
 
+plt.rcParams['font.sans-serif']=['SimHei']
 plt.ion()
 dt = 5e-2
 cur_t = 0
@@ -118,6 +119,8 @@ while cur_t < t_max:
 plt.ioff()
 plt.cla()
 plt.autoscale()
+plt.xlabel('时间（s）')
+plt.ylabel('平均动能（J）')
 plt.plot(t_list, T_list, c='blue')
 plt.savefig('1.png')
 plt.show()
@@ -128,6 +131,8 @@ for atom in atom_list:
     v_list.append((atom.vx ** 2 + atom.vy ** 2) ** 0.5)
 
 plt.cla()
-plt.hist(v_list, bins=15)
+plt.hist(v_list, bins=16)
+plt.xlabel('粒子速度（m/s）')
+plt.ylabel('计数')
 plt.savefig('2.png')
 plt.show()
