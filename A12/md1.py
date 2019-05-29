@@ -101,14 +101,16 @@ atom_list, T_list = [], []
 t_list = []
 # Initialization
 for i in range(num_of_atom):
-    x0, y0 = random() * max_x, random() * max_y
-    v0, theta0 = random() + 0.5, random() * 2 * pi
+    x0, y0 = i % 8 + 1.5, i // 8 + 1.5
+    v0, theta0 = 0, 0
     atom_list.append(Mass(x0, y0, v0 * cos(theta0), v0 * sin(theta0), k=0.1))
     # plt.plot(x0, y0, c='blue')
 
 while cur_t < t_max:
     move()
     T_cur = get_system_temperature(atom_list, 2, num_of_atom)
+    if abs(T_cur - T_eq) > 0.1:
+        temperature_adjust(T_cur)
     T_list.append(T_cur)
     t_list.append(cur_t)
     cur_t += dt
