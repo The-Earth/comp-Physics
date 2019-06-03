@@ -74,55 +74,82 @@ def delta_energy(arr: np.ndarray, target: tuple) -> float:
     return delta
 
 
-size = 20
-steps = int(2e3)
-accept_para = 0.8
-p_size = 20
+def main(T):
+    accept_para = 1 / T
+    crystal = np.zeros(shape=(size, size), dtype='int8')
 
-crystal = np.zeros(shape=(size, size), dtype='int8')
+    # Initialize
 
-# Initialize
+    for i in range(size):
+        for j in range(size):
+            crystal[i, j] = np.random.choice([-1, 1])
+            # if crystal[i, j] == 1:
+            #     plt.scatter(j, i, s=p_size, c='b')
+            # elif crystal[i, j] == -1:
+            #     plt.scatter(j, i, s=p_size, c='r')
+    # plt.savefig('crystal_init.png')
+    # plt.show()
 
-for i in range(size):
-    for j in range(size):
-        crystal[i, j] = np.random.choice([-1, 1])
-        if crystal[i, j] == 1:
-            plt.scatter(j, i, s=p_size, c='b')
-        elif crystal[i, j] == -1:
-            plt.scatter(j, i, s=p_size, c='r')
-plt.savefig('crystal_init.png')
-plt.show()
+    energy_list = [total_energy(crystal)]
+    cur_step = 1
 
-energy_list = [total_energy(crystal)]
-cur_step = 1
-while cur_step < steps:
-    flipped = random_flip(crystal)
-    cur_energy = total_energy(crystal)
-    if cur_energy < energy_list[-1]:
-        energy_list.append(cur_energy)
-        cur_step += 1
-    else:
-        p = np.exp(-accept_para * (cur_energy - energy_list[-1]))  # Accept by chance
-        if np.random.random() < p:
+    # Cv calc
+    sample_start = 0
+    sampled = 0
+
+    while cur_step < steps:
+        flipped = random_flip(crystal)
+        dE = delta_energy(crystal, flipped)
+        cur_energy = energy_list[-1] + dE
+        if dE < 0:
             energy_list.append(cur_energy)
             cur_step += 1
         else:
-            flip_one(crystal, flipped)
+            p = np.exp(-accept_para * dE)  # Accept by chance
+            if np.random.random() < p:
+                energy_list.append(cur_energy)
+                cur_step += 1
+            else:
+                flip_one(crystal, flipped)
+
+        # energy_monitor = energy_list[-50:]
+        # if max(energy_monitor) - min(energy_monitor) < 30 and not sampled:
+        #     sample_start = cur_step
+        #     print(cur_step)
+        #     sampled = 1
+
+    # Calculate Cv
+    sample = energy_list[-50000:]
+    sample_ave_sqr = (sum(sample) / len(sample)) ** 2
+    sample_sqr_ave = sum([x ** 2 for x in sample]) / len(sample)
+    Cv = (size ** 2) / (T ** 2) * (sample_sqr_ave - sample_ave_sqr)
+
+    # plt.cla()
+    # for i in range(size):
+    #     for j in range(size):
+    #         if crystal[i, j] == 1:
+    #             plt.scatter(j, i, s=p_size, c='b')
+    #         elif crystal[i, j] == -1:
+    #             plt.scatter(j, i, s=p_size, c='r')
+    #         else:
+    #             raise ValueError
+    # plt.savefig('crystal.png')
+    # plt.show()
+
+    plt.cla()
+    plt.plot(list(range(steps)), energy_list, c='b')
+    plt.savefig(f'./pic/energy-{T}.png')
+
+    return Cv
+
+
+Cv_list = []
+t_list = [1.5 + 0.01 * x for x in range(100)]
+for t in t_list:
+    Cv_list.append(main(t))
+    print(t, 'done')
 
 plt.cla()
-for i in range(size):
-    for j in range(size):
-        if crystal[i, j] == 1:
-            plt.scatter(j, i, s=p_size, c='b')
-        elif crystal[i, j] == -1:
-            plt.scatter(j, i, s=p_size, c='r')
-        else:
-            raise ValueError
-
-plt.savefig('crystal.png')
-plt.show()
-
-plt.cla()
-plt.plot(list(range(steps)), energy_list, c='b')
-plt.savefig('energy.png')
+plt.plot(t_list, Cv_list, c='b')
+plt.savefig(f'cv-{t_list[0]}-{t_list[-1]}.png')
 plt.show()
