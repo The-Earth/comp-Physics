@@ -83,7 +83,6 @@ def ising_core(T):
     crystal = np.zeros(shape=(size, size), dtype='int8')
 
     # Initialize
-
     for i in range(size):
         for j in range(size):
             crystal[i, j] = np.random.choice([-1, 1])
@@ -96,10 +95,6 @@ def ising_core(T):
 
     energy_list = [total_energy(crystal)]
     cur_step = 1
-
-    # Cv calc
-    sample_start = 0
-    sampled = 0
 
     while cur_step < steps:
         flipped = random_flip(crystal)
@@ -115,12 +110,6 @@ def ising_core(T):
                 cur_step += 1
             else:
                 flip_one(crystal, flipped)
-
-        # energy_monitor = energy_list[-50:]
-        # if max(energy_monitor) - min(energy_monitor) < 30 and not sampled:
-        #     sample_start = cur_step
-        #     print(cur_step)
-        #     sampled = 1
 
     # Calculate Cv
     sample = energy_list[-50000:]
