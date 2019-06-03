@@ -20,22 +20,58 @@ def flip_one(arr: np.ndarray, cord: tuple):
 
 
 def total_energy(arr: np.ndarray) -> float:
-    beta = -1
     energy = 0
     total_length = arr.shape[0] * arr.shape[1]
     for ind in range(total_length):
         x_1 = ind % arr.shape[1]
         y_1 = ind // arr.shape[0]
-        if x_1 == arr.shape[1] - 1 and y_1 != arr.shape[0] - 1:
-            energy -= beta * arr[y_1, x_1] * arr[y_1 + 1, x_1]
-        elif x_1 != arr.shape[1] - 1 and y_1 == arr.shape[0] - 1:
-            energy -= beta * arr[y_1, x_1] * arr[y_1, x_1 + 1]
-        elif x_1 == arr.shape[1] - 1 and y_1 == arr.shape[0] - 1:
-            pass
+        if x_1 != arr.shape[1] - 1:
+            energy -= arr[y_1, x_1] * arr[y_1, x_1 + 1]
         else:
-            energy -= beta * (arr[y_1, x_1] * arr[y_1 + 1, x_1] + arr[y_1, x_1] * arr[y_1, x_1 + 1])
+            energy -= arr[y_1, x_1] * arr[y_1, 0]
 
-    return energy
+        if y_1 != arr.shape[0] - 1:
+            energy -= arr[y_1, x_1] * arr[y_1 + 1, x_1]
+        else:
+            energy -= arr[y_1, x_1] * arr[0, x_1]
+
+        if x_1 != 0:
+            energy -= arr[y_1, x_1] * arr[y_1, x_1 - 1]
+        else:
+            energy -= arr[y_1, x_1] * arr[y_1, -1]
+
+        if y_1 != 0:
+            energy -= arr[y_1, x_1] * arr[y_1 - 1, x_1]
+        else:
+            energy -= arr[y_1, x_1] * arr[0, x_1]
+
+    return energy / 2
+
+
+def delta_energy(arr: np.ndarray, target: tuple) -> float:
+    delta = 0
+    y, x = target
+    new_val = arr[target]
+    old_val = 1 if new_val == -1 else -1
+
+    if x != arr.shape[1] - 1:
+        delta += ((-arr[y, x + 1] * new_val) - (-arr[y, x + 1] * old_val))
+    else:
+        delta += ((-arr[y, 0] * new_val) - (-arr[y, 0] * old_val))
+    if y != arr.shape[0] - 1:
+        delta += ((-arr[y + 1, x] * new_val) - (-arr[y + 1, x] * old_val))
+    else:
+        delta += ((-arr[0, x] * new_val) - (-arr[0, x] * old_val))
+    if x != 0:
+        delta += ((-arr[y, x - 1] * new_val) - (-arr[y, x - 1] * old_val))
+    else:
+        delta += ((-arr[y, -1] * new_val) - (-arr[y, -1] * old_val))
+    if y != 0:
+        delta += ((-arr[y - 1, x] * new_val) - (-arr[y - 1, x] * old_val))
+    else:
+        delta += ((-arr[-1, x] * new_val) - (-arr[-1, x] * old_val))
+
+    return delta
 
 
 size = 20
