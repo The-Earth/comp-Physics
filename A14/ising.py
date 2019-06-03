@@ -78,7 +78,7 @@ def delta_energy(arr: np.ndarray, target: tuple) -> float:
     return delta
 
 
-def main(T):
+def ising_core(T):
     accept_para = 1 / T
     crystal = np.zeros(shape=(size, size), dtype='int8')
 
@@ -143,17 +143,10 @@ def main(T):
     plt.cla()
     plt.plot(list(range(steps)), energy_list, c='b')
     plt.savefig(f'./pic/energy-{T}.png')
+    print(T, 'done')
 
-    return Cv
+    return T, Cv
 
 
-Cv_list = []
-t_list = [1.5 + 0.01 * x for x in range(100)]
-for t in t_list:
-    Cv_list.append(main(t))
-    print(t, 'done')
-
-plt.cla()
-plt.plot(t_list, Cv_list, c='b')
-plt.savefig(f'cv-{t_list[0]}-{t_list[-1]}.png')
-plt.show()
+if __name__ == '__main__':
+    pass
