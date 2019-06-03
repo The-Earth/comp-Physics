@@ -1,6 +1,10 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
+size = 20
+steps = int(2e5)
+p_size = 30
+
 
 def random_flip(arr: np.ndarray):
     y_choice = np.random.randint(0, arr.shape[0])
