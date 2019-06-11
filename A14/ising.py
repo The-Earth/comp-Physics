@@ -1,10 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-size = 20
-steps = int(2e5)
-p_size = 30
-
 
 def random_flip(arr: np.ndarray):
     y_choice = np.random.randint(0, arr.shape[0])
@@ -79,8 +75,18 @@ def delta_energy(arr: np.ndarray, target: tuple) -> float:
 
 
 def ising_core(T):
+    size = 20
+    p_size = 30
     accept_para = 1 / T
     crystal = np.zeros(shape=(size, size), dtype='int8')
+    steps = int(2e5)
+
+    if 1.2 < T < 1.9:
+        steps = int(5e4)
+    elif 1.9 <= T < 2.1:
+        steps = int(2e5)
+    elif 2.1 <= T:
+        steps = int(5e5)
 
     # Initialize
     for i in range(size):
@@ -112,7 +118,7 @@ def ising_core(T):
                 flip_one(crystal, flipped)
 
     # Calculate Cv
-    sample = energy_list[-50000:]
+    sample = energy_list[steps // 5:]
     sample_ave_sqr = (sum(sample) / len(sample)) ** 2
     sample_sqr_ave = sum([x ** 2 for x in sample]) / len(sample)
     Cv = (size ** 2) / (T ** 2) * (sample_sqr_ave - sample_ave_sqr)

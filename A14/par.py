@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 def main():
     pool = multiprocessing.Pool(2)
 
-    in_list = [1.5 + 0.01 * x for x in range(100)]
+    in_list = [1.5 + 0.1 * x for x in range(15)]
     res_list = []
 
     for t in in_list:
@@ -23,7 +23,7 @@ def main():
         t_list.append(res.get()[0])
 
     plt.cla()
-    plt.plot(t_list, cv_list, c='b')
+    plt.scatter(t_list, cv_list, c='b')
     plt.savefig(f'cv-{in_list[0]}-{in_list[-1]}.png')
     plt.show()
 
