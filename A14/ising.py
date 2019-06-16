@@ -100,6 +100,7 @@ def ising_core(T):
     # plt.show()
 
     energy_list = [total_energy(crystal)]
+    spin_list = [sum(sum(crystal))]
     cur_step = 1
 
     while cur_step < steps:
@@ -108,11 +109,13 @@ def ising_core(T):
         cur_energy = energy_list[-1] + dE
         if dE < 0:
             energy_list.append(cur_energy)
+            spin_list.append(sum(sum(crystal)))
             cur_step += 1
         else:
             p = np.exp(-accept_para * dE)  # Accept by chance
             if np.random.random() < p:
                 energy_list.append(cur_energy)
+                spin_list.append(sum(sum(crystal)))
                 cur_step += 1
             else:
                 flip_one(crystal, flipped)
@@ -122,6 +125,14 @@ def ising_core(T):
     sample_ave_sqr = (sum(sample) / len(sample)) ** 2
     sample_sqr_ave = sum([x ** 2 for x in sample]) / len(sample)
     Cv = (size ** 2) / (T ** 2) * (sample_sqr_ave - sample_ave_sqr)
+
+    # Calculate mag
+    mag_smp = spin_list[4 * (steps // 5):]
+    mag = abs(sum(mag_smp) / len(mag_smp) / (size * size))
+
+    # Calculate energy
+    energy_smp = energy_list[4 * (steps // 5):]
+    energy_ave = sum(energy_smp) / len(energy_smp)
 
     # plt.cla()
     # for i in range(size):
