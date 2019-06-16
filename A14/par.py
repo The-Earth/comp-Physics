@@ -2,11 +2,14 @@ import multiprocessing
 from ising import ising_core
 from matplotlib import pyplot as plt
 
+plt.rcParams['font.sans-serif'] = ['SimHei']
+plt.rcParams['axes.unicode_minus'] = False
+
 
 def main():
     pool = multiprocessing.Pool(2)
 
-    in_list = [1.5 + 0.1 * x for x in range(15)]
+    in_list = [1.2 + 0.1 * x for x in range(23)]
     res_list = []
 
     for t in in_list:

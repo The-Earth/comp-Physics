@@ -81,7 +81,7 @@ def ising_core(T):
     crystal = np.zeros(shape=(size, size), dtype='int8')
     steps = int(2e5)
 
-    if 1.2 < T < 1.9:
+    if 1.2 <= T < 1.9:
         steps = int(5e4)
     elif 1.9 <= T < 2.1:
         steps = int(2e5)
@@ -121,7 +121,7 @@ def ising_core(T):
                 flip_one(crystal, flipped)
 
     # Calculate Cv
-    sample = energy_list[steps // 5:]
+    sample = energy_list[4 * (steps // 5):]
     sample_ave_sqr = (sum(sample) / len(sample)) ** 2
     sample_sqr_ave = sum([x ** 2 for x in sample]) / len(sample)
     Cv = (size ** 2) / (T ** 2) * (sample_sqr_ave - sample_ave_sqr)
