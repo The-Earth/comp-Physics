@@ -14,11 +14,11 @@ max_y = 10
 
 class Mass:
 
-    def __init__(self, x0, y0, vx0, vy0, k=1.):
-        self.x = x0
-        self.prev_x = x0
-        self.y = y0
-        self.prev_y = y0
+    def __init__(self, _x, _y, vx0, vy0, k=1.):
+        self.x = _x
+        self.prev_x = _x
+        self.y = _y
+        self.prev_y = _y
         self.vx = vx0
         self.vy = vy0
         self.ax = 0
@@ -27,16 +27,23 @@ class Mass:
         self.prev_ay = 0
         self.k = k
 
-    def update_r(self, max_x, max_y):
+    def update_r(self, _max_x, _max_y):
         self.prev_x, self.prev_y = self.x, self.y
         self.x = self.x + self.vx * dt + 0.5 * self.ax * dt ** 2
         self.y = self.y + self.vy * dt + 0.5 * self.ay * dt ** 2
 
-        # Periodical boundary
-        if self.x > max_x or self.x < 0:
-            self.x = self.x - self.x // max_x * max_x
-        if self.y > max_y or self.y < 0:
-            self.y = self.y - self.y // max_y * max_y
+        # # Periodical boundary
+        # if self.x > _max_x or self.x < 0:
+        #     self.x = self.x - self.x // _max_x * _max_x
+        # if self.y > _max_y or self.y < 0:
+        #     self.y = self.y - self.y // _max_y * _max_y
+
+        # Hard boundary
+        if self.x > _max_x - 0.2 or self.x < 0.2:
+            self.vx = -self.vx
+        if self.y > _max_y - 0.2 or self.y < 0.2:
+            self.vy = -self.vy
+
         return self.x, self.y
 
     def update_v(self):
@@ -50,14 +57,14 @@ class Mass:
             self.prev_ax, self.prev_ay = self.ax, self.ay
             return self.prev_ax, self.prev_ay
 
-        for atom in all_atoms:
-            assert isinstance(atom, Mass)
-            if atom == self:
+        for _atom in all_atoms:
+            assert isinstance(_atom, Mass)
+            if _atom == self:
                 continue
-            dx = self.x - atom.x
-            dy = self.y - atom.y
+            dx = self.x - _atom.x
+            dy = self.y - _atom.y
             dr = sqrt(dx ** 2 + dy ** 2)
-            if dr > 1.2:  # Cut-off
+            if dr > 1.5:  # Cut-off
                 pass
             else:
                 ax += (2 * dr ** (-13) - dr ** (-7)) * dx / dr
@@ -69,31 +76,33 @@ class Mass:
 
 
 def get_system_temperature(all_atoms, dimension, amount):
-    sum = 0
-    for atom in all_atoms:
-        assert isinstance(atom, Mass)
-        sum += 0.5 * (atom.vx ** 2 + atom.vy ** 2)
-    return 2 * sum / dimension / amount
+    _sum = 0
+    for _atom in all_atoms:
+        assert isinstance(_atom, Mass)
+        _sum += 0.5 * (_atom.vx ** 2 + _atom.vy ** 2)
+    return 2 * _sum / dimension / amount
 
 
-def temperature_adjust(T_cur):
-    for atom in atom_list:
-        atom.vx = atom.vx * ((T_eq / T_cur) ** 0.5)
-        atom.vy = atom.vy * ((T_eq / T_cur) ** 0.5)
+def temperature_adjust(_T_cur):
+    for _atom in atom_list:
+        _atom.vx = _atom.vx * ((T_eq / _T_cur) ** 0.5)
+        _atom.vy = _atom.vy * ((T_eq / _T_cur) ** 0.5)
 
 
 def move():
     plt.cla()
     plt.xlim(0, max_x)
     plt.ylim(0, max_y)
-    for atom in atom_list:
-        atom.update_a(atom_list, prev=True)
-        atom.update_a(atom_list, prev=False)
-    for atom in atom_list:
-        atom.update_v()
-    for atom in atom_list:
-        atom.update_r(max_x, max_y)
-        plt.scatter(atom.x, atom.y, c='blue', s=6)
+    for _atom in atom_list:
+        _atom.update_a(atom_list, prev=True)
+        _atom.update_a(atom_list, prev=False)
+    for _atom in atom_list:
+        _atom.update_v()
+    for _atom in atom_list:
+        _atom.update_r(max_x, max_y)
+        plt.scatter(_atom.x, _atom.y, c='blue', s=6)
+
+    plt.pause(0.1e-2)
 
     plt.pause(0.2e-2)
 
