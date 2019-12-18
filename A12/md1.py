@@ -1,12 +1,12 @@
 from matplotlib import pyplot as plt
-from scipy import sin, cos, sqrt
+from scipy import sin, cos, sqrt, random, pi, exp
+import pickle
 
-plt.rcParams['font.sans-serif']=['SimHei']
+plt.rcParams['font.sans-serif'] = ['SimHei']
 plt.ion()
-dt = 5e-2
-cur_t = 0
+dt = 0.1
 t_max = 80
-num_of_atom = 64
+num_of_atom = 256
 T_eq = 0.2
 max_x = 10
 max_y = 10
@@ -67,8 +67,8 @@ class Mass:
             if dr > 1.5:  # Cut-off
                 pass
             else:
-                ax += (2 * dr ** (-13) - dr ** (-7)) * dx / dr
-                ay += (2 * dr ** (-13) - dr ** (-7)) * dy / dr
+                ax += self.k * (2 * dr ** (-13) - dr ** (-7)) * dx / dr
+                ay += self.k * (2 * dr ** (-13) - dr ** (-7)) * dy / dr
 
         self.ax = ax
         self.ay = ay
@@ -104,44 +104,73 @@ def move():
 
     plt.pause(0.1e-2)
 
-    plt.pause(0.2e-2)
+
+def maxwell_dist():
+    while True:
+        _x = random.uniform(-3, 3)
+        _y = random.uniform(0, 1)
+        if _y < _x ** 2 * exp(-_x ** 2):
+            return _x
 
 
-atom_list, T_list = [], []
-t_list = []
-# Initialization
-for i in range(num_of_atom):
-    x0, y0 = 1.09 * (i % 8) + 1, 1.09 * (i // 8) + 1
-    v0, theta0 = 0, 0
-    atom_list.append(Mass(x0, y0, v0 * cos(theta0), v0 * sin(theta0), k=0.1))
-    # plt.plot(x0, y0, c='blue')
+if __name__ == '__main__':
+    cur_t = 0
+    atom_list, T_list = [], []
+    t_list = []
+    # Initialization
+    for i in range(num_of_atom):
+        x0, y0 = 0.55 * (i % 16) + random.uniform(0.9, 1.1), 0.55 * (i // 16) + random.uniform(0.9, 1.1)
+        v0, theta0 = 0.1 * maxwell_dist(), random.uniform(0, 2 * pi)
+        atom_list.append(Mass(x0, y0, v0 * cos(theta0), v0 * sin(theta0), k=1e-7))
+        # plt.plot(x0, y0, c='blue')
 
-while cur_t < t_max:
-    move()
-    T_cur = get_system_temperature(atom_list, 2, num_of_atom)
-    # if abs(T_cur - T_eq) > 0.18:
-    #     temperature_adjust(T_cur)
-    T_list.append(T_cur)
-    t_list.append(cur_t)
-    cur_t += dt
+    while cur_t < t_max:
+        move()
+        T_cur = get_system_temperature(atom_list, 2, num_of_atom)
+        if abs(T_cur - T_eq) > 1:
+            temperature_adjust(T_cur)
+        T_list.append(T_cur)
+        t_list.append(cur_t)
+        print(cur_t / t_max)
+        cur_t += dt
 
-plt.ioff()
-plt.cla()
-plt.autoscale()
-plt.xlabel('时间（s）')
-plt.ylabel('平均动能（J）')
-plt.plot(t_list, T_list, c='blue')
-plt.savefig('1.png')
-plt.show()
+    plt.ioff()
+    plt.cla()
+    plt.autoscale()
+    plt.xlabel('t')
+    plt.ylabel('Ek')
+    plt.plot(t_list, T_list, c='blue')
+    plt.savefig('1.png')
+    plt.show()
 
-v_list = []
+    v_list = []
+    vx_list = []
+    vy_list = []
 
-for atom in atom_list:
-    v_list.append((atom.vx ** 2 + atom.vy ** 2) ** 0.5)
+    for atom in atom_list:
+        v_list.append((atom.vx ** 2 + atom.vy ** 2) ** 0.5)
+        vx_list.append(atom.vx)
+        vy_list.append(atom.vy)
 
-plt.cla()
-plt.hist(v_list, bins=16)
-plt.xlabel('粒子速度（m/s）')
-plt.ylabel('计数')
-plt.savefig('2.png')
-plt.show()
+    plt.cla()
+    plt.hist(v_list, bins=16)
+    plt.xlabel('v')
+    plt.ylabel('numbers')
+    plt.savefig('V.png')
+    plt.show()
+
+    plt.cla()
+    plt.hist(vx_list, bins=16)
+    plt.xlabel('vx')
+    plt.ylabel('numbers')
+    plt.savefig('Vx.png')
+    plt.show()
+
+    plt.cla()
+    plt.hist(vy_list, bins=16)
+    plt.xlabel('vy')
+    plt.ylabel('numbers')
+    plt.savefig('Vy.png')
+    plt.show()
+
+    pickle.dump(atom_list, open('atom_list.pkl', 'wb'))
